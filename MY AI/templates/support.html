@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suport & FAQ | Titan Shop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <nav class="glass fade-in">
+        <a href="/" class="logo">Titan <span>Shop</span></a>
+        <div class="nav-links">
+            <a href="/">Acasă</a>
+            <a href="/cart">Coș</a>
+            <a href="/orders">Comenzi</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="cart-header fade-in" style="margin-top: 160px;">
+        <h1 class="glow-text">Centru de <span>Suport</span> & FAQ</h1>
+    </div>
+
+    <div class="products-container fade-in" style="grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px;">
+        <!-- FAQ SECTION -->
+        <div class="glass" style="padding: 40px; border-radius: var(--radius-lg);">
+            <h2 style="margin-bottom: 30px; font-size: 28px; color: white;"><i class="fas fa-question-circle"></i> FAQ</h2>
+            <div style="margin-bottom: 30px;">
+                <h4 style="color: var(--accent-pink); margin-bottom: 10px;">Cum primesc produsul cumpărat?</h4>
+                <p style="color: var(--text-gray); font-size: 14px;">Instantaneu după plată, vei găsi butoanele de download pe pagina "Comenzi" și vei primi un email de confirmare.</p>
+            </div>
+            <div style="margin-bottom: 30px;">
+                <h4 style="color: var(--accent-pink); margin-bottom: 10px;">Ce fac dacă fișierul nu merge?</h4>
+                <p style="color: var(--text-gray); font-size: 14px;">Fiecare produs este testat, dar dacă ai probleme, te rugăm să folosești formularul de contact pentru asistență gratuită în 24-48h.</p>
+            </div>
+        </div>
+
+        <!-- CONTACT SECTION -->
+        <div class="glass" style="padding: 40px; border-radius: var(--radius-lg);">
+            <h2 style="margin-bottom: 30px; font-size: 28px; color: white;"><i class="fas fa-paper-plane"></i> Contact</h2>
+            <form action="/support/contact" method="POST">
+                <div class="input-group">
+                    <label>Subiectul Mesajului</label>
+                    <input type="text" name="subject" required placeholder="Ex: Probleme la descărcare">
+                </div>
+                <div class="input-group">
+                    <label>Email-ul Tău</label>
+                    <input type="email" name="email" required value="{{ session.get('user', 'client') }}@gmail.com">
+                </div>
+                <div class="input-group">
+                    <label>Mesajul Tău</label>
+                    <textarea name="message" required style="height: 120px;" placeholder="Descrie problema ta..."></textarea>
+                </div>
+                <button type="submit" class="btn-neon" style="width: 100%;">Trimite Mesaj</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ANPC / SOL LINKS -->
+    <div style="max-width: 1200px; margin: 60px auto; padding: 40px; text-align: center; border-top: 1px solid var(--glass-border);">
+        <h4 style="text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; color: var(--text-gray); font-size: 14px;">Link-uri Legale Obligatorii</h4>
+        <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+            <a href="https://anpc.ro" target="_blank" class="glass" style="padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; width: 320px;">
+                <i class="fas fa-shield-halved" style="font-size: 30px; color: var(--accent-pink);"></i>
+                <div style="text-align: left;">
+                    <div style="font-weight: 700; font-size: 12px;">ANPC</div>
+                    <div style="font-size: 10px; color: var(--text-gray);">Autoritatea Națională pentru Protecția Consumatorilor</div>
+                </div>
+            </a>
+            <a href="https://ec.europa.eu/consumers/odr" target="_blank" class="glass" style="padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; color: white; text-decoration: none; width: 320px;">
+                <i class="fas fa-balance-scale" style="font-size: 30px; color: var(--accent-pink);"></i>
+                <div style="text-align: left;">
+                    <div style="font-weight: 700; font-size: 12px;">SOL</div>
+                    <div style="font-size: 10px; color: var(--text-gray);">Soluționarea Online a Litigiilor</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

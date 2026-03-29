@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coș & Comenzi | Titan Shop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- FONTAWESOME - ICONIȚE PROFESIONALE -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SDK PAYPAL OFICIAL - INTEGRAT TITAN SHOP -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AW4H3MS1HApBEVLXiSSuxnDgVzB-1GkBCWRhrOjmOoiMn4IJC01jiNQBoosO9TH_u-IntMuZWxTgXDSN&currency=EUR"></script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <nav class="glass fade-in">
+        <a href="/" class="logo">Titan <span>Shop</span></a>
+        <div class="nav-links">
+            <a href="/">Acasă</a>
+            <a href="/cart" class="cart-btn" style="color: #ff2d95;">Coș <span id="cart-count">0</span></a>
+            <a href="/orders">Comenzi</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    {% if history %}
+    <div class="cart-header fade-in">
+        <h1>Istoric <span>Comenzi</span></h1>
+    </div>
+    <div class="cart-content">
+        {% if orders %}
+            {% for o in orders %}
+            <div class="glass order-item fade-in">
+                <div class="order-info">
+                    <h3 style="color: #ff2d95;">Comandă ID #TITAN-{{ loop.index }}</h3>
+                    <p>{{ o.date }}</p>
+                    <ul style="list-style: none; margin-top: 10px; padding-left: 0; color: #fff;">
+                        {% for item in o.products %}
+                        <li style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                {% if item.image %}
+                                <img src="{{ item.image }}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                                {% else %}
+                                <div style="width: 50px; height: 50px; border-radius: 8px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;"><i class="fas fa-file-zipper"></i></div>
+                                {% endif %}
+                                <div>
+                                    <div style="font-weight: 700; color: white; font-size: 14px;">{{ item.name }}</div>
+                                    <div style="font-size: 11px; color: var(--text-gray);">Cod: #SKU-{{ item.id }}</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                {% if item.driveUrl or item.drive_url %}
+                                <a href="{{ item.driveUrl or item.drive_url }}" target="_blank" class="btn-neon" style="padding: 10px 25px; font-size: 11px; text-decoration: none;">
+                                    <i class="fas fa-cloud-arrow-down"></i> Download
+                                </a>
+                                {% elif item.zip %}
+                                <a href="/download/{{ item.zip }}" class="btn-neon" style="padding: 10px 25px; font-size: 11px; text-decoration: none; background: rgba(255,255,255,0.05);">Download (Local)</a>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 20px; font-weight: 800;">{{ o.total }}€</div>
+                    <span style="font-size: 11px; text-transform: uppercase; color: #4caf50;">Procesată</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass order-item fade-in" style="justify-content: center;">Nu ai comenzi plasate încă.</div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="cart-header fade-in">
+        <h1>Coșul de <span>Cumpărături</span></h1>
+    </div>
+    <div class="cart-content">
+        <div id="cart-items-container">
+            <!-- JS dynamic content -->
+        </div>
+
+        <div class="glass total-section fade-in">
+            <div>
+                <p style="color: #b0b0b0; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Suma de plată</p>
+                <div class="total-price" id="cart-total-price">0€</div>
+            </div>
+            <button onclick="checkout()" class="btn-neon" style="width: auto; padding: 15px 50px;">Finalizează Comanda</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Payment Modal (Enhanced) -->
+    <div id="payment-modal" class="modal fade-in" style="display: none;">
+        <div class="glass modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 32px; font-weight: 800; color: white;">Finalizare <span>Comandă</span></h2>
+                <div class="close-btn" onclick="closePayment()">×</div>
+            </div>
+
+            <div class="checkout-trust-row" style="display: flex; gap: 15px; justify-content: center; margin-bottom: 25px;">
+                <div class="trust-mini-card" style="font-size: 13px; color: var(--accent-pink);"><i class="fas fa-lock"></i> SSL Secure</div>
+                <div class="trust-mini-card" style="font-size: 13px; color: var(--text-gray);"><i class="fas fa-headset"></i> Support 24/7</div>
+                <div class="trust-mini-card" style="font-size: 13px; color: #10b981;"><i class="fas fa-bolt"></i> Safe Delivery</div>
+            </div>
+            
+            <div id="payment-form">
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 50px;">
+                    <!-- STÂNGA: DETALII LIVRARE & PRODUSE -->
+                    <div>
+                        <h4 style="margin-bottom: 25px; color: var(--text-gray); text-transform: uppercase; font-size: 11px; letter-spacing: 1.5px;">1. Detalii Livrare</h4>
+                        <div class="input-group">
+                            <label><i class="fas fa-envelope"></i> Email pentru livrare</label>
+                            <input type="email" id="checkout-email" required placeholder="nume@exemplu.com">
+                        </div>
+
+                        <h4 style="margin-top: 40px; margin-bottom: 20px; color: var(--text-gray); text-transform: uppercase; font-size: 11px; letter-spacing: 1.5px;">2. Sumar Comandă</h4>
+                        <div style="background: rgba(255, 255, 255, 0.03); padding: 25px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                            <div id="checkout-product-list" style="color: white; font-weight: 500; font-size: 14px; line-height: 1.6;">-</div>
+                        </div>
+                    </div>
+
+                    <!-- DREAPTA: PLATĂ & SUMĂ -->
+                    <div style="background: hsla(240, 20%, 8%, 0.3); padding: 40px; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                        <h4 style="margin-bottom: 25px; color: var(--text-gray); text-transform: uppercase; font-size: 11px; letter-spacing: 1.5px;">3. Metodă Plată</h4>
+                        
+                        <p style="color: var(--text-gray); font-size: 13px; margin-bottom: 5px;">Suma de plată</p>
+                        <div id="pay-amount" style="font-size: 42px; font-weight: 800; color: var(--accent-pink); margin-bottom: 30px;">0.00€</div>
+                        
+                        <p id="payment-status-text" style="font-size: 12px; color: var(--text-gray); margin-bottom: 25px; line-height: 1.5;"></p>
+
+                        <div id="payment-methods-ui">
+                            <div id="paypal-button-container" style="min-height: 150px; position: relative; z-index: 100;"></div>
+                        </div>
+
+                        <div id="review-request-ui" style="display: none; text-align: left; margin-top: 20px;">
+                            <h4 style="color: var(--accent-pink); margin-bottom: 15px;">Lasă un review opțional:</h4>
+                            <div id="review-items-container"></div>
+                            <button onclick="location.href='/orders'" class="btn-neon" style="width: 100%; margin-top: 20px;">CONTINUĂ LA COMENZI</button>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 30px; opacity: 0.5;">
+                            <i class="fab fa-cc-stripe" style="font-size: 24px;"></i>
+                            <i class="fab fa-cc-paypal" style="font-size: 24px;"></i>
+                            <i class="fab fa-cc-visa" style="font-size: 24px;"></i>
+                            <i class="fab fa-cc-mastercard" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
+        if (typeof renderCartContents === 'function') {
+            renderCartContents();
+        }
+    </script>
+</body>
+</html>

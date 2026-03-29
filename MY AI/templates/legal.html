@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termeni și Condiții | Titan Shop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+    <nav class="glass fade-in">
+        <a href="/" class="logo">Titan <span>Shop</span></a>
+        <div class="nav-links">
+            <a href="/">Acasă</a>
+            <a href="/cart">Coș</a>
+            <a href="/orders">Comenzi</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="cart-header fade-in" style="margin-top: 160px;">
+        <h1 class="glow-text">Termeni, Condiții & <span>Privacy Policy</span></h1>
+    </div>
+
+    <div class="cart-content fade-in" style="background: rgba(255, 255, 255, 0.02); padding: 60px; border-radius: 20px; border: 1px solid var(--glass-border);">
+        <section style="margin-bottom: 60px;">
+            <h2 style="color: var(--accent-pink); margin-bottom: 25px;"><i class="fas fa-gavel"></i> Termeni și Condiții de Utilizare</h2>
+            <div style="color: var(--text-gray); font-size: 15px; line-height: 1.8; text-align: justify;">
+                <p>Bun venit pe <strong>Titan Shop</strong>. Utilizarea acestui site implică acceptarea deplină a următorilor termeni:</p>
+                <ol style="margin-top: 20px; padding-left: 20px;">
+                    <li><strong>Produse Digitale</strong>: Fișierele vândute sunt resurse digitale. Odată descărcate, nu pot fi returnate conform legii produselor livrate digital.</li>
+                    <li><strong>Proprietate Intelectuală</strong>: Scripturile sunt proprietatea creatorilor. Cumpărarea unui produs îți oferă dreptul de utilizare, nu de revânzare.</li>
+                    <li><strong>Răspundere</strong>: Titan Shop nu este responsabil pentru daune directe sau indirecte cauzate de utilizarea necorespunzătoare a scripturilor.</li>
+                    <li><strong>Jurisdicție</strong>: Toate litigiile sunt guvernate de legile în vigoare din România.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section style="margin-bottom: 60px;">
+            <h2 style="color: var(--accent-pink); margin-bottom: 25px;"><i class="fas fa-shield-halved"></i> Politica de Confidențialitate (GDPR)</h2>
+            <div style="color: var(--text-gray); font-size: 15px; line-height: 1.8; text-align: justify;">
+                <p>Titan Shop respectă confidențialitatea datelor tale conform Regulamentului (UE) 2016/679 (GDPR).</p>
+                <ul style="margin-top: 20px; list-style-type: square; padding-left: 20px;">
+                    <li><strong>Date Colectate</strong>: Email, username și adresa IP (pentru securitatea plăților).</li>
+                    <li><strong>Scop</strong>: Procesarea comenzilor, livrarea resurselor digitale și securitatea contului.</li>
+                    <li><strong>Drepturile tale</strong>: Ai dreptul de acces, rectificare sau ștergere ("dreptul de a fi uitat") al datelor tale.</li>
+                    <li><strong>Terți</strong>: Datele tale nu sunt vândute niciodată terților, excepție făcând procesatorii de plată (PayPal/PaySafeCard).</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="color: var(--accent-pink); margin-bottom: 25px;"><i class="fas fa-cookie-bite"></i> Politica de Cookie-uri</h2>
+            <p style="color: var(--text-gray); font-size: 15px; line-height: 1.8;">Folosim cookie-uri esențiale pentru a-ți menține sesiunea de logare activă și pentru a-ți salva produsele în coș. Nu folosim cookie-uri de tracking sau publicitate invazivă.</p>
+        </section>
+
+        <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--glass-border); display: flex; justify-content: center; gap: 40px;">
+            <a href="https://anpc.ro" target="_blank" class="glass" style="padding: 15px 25px; border-radius: 12px; display: flex; align-items: center; gap: 15px; color: white; text-decoration: none;">
+                <i class="fas fa-shield-halved" style="font-size: 24px; color: var(--accent-pink);"></i>
+                <span style="font-size: 11px; font-weight: 700;">ANPC - Protecție Consumator</span>
+            </a>
+            <a href="https://ec.europa.eu/consumers/odr" target="_blank" class="glass" style="padding: 15px 25px; border-radius: 12px; display: flex; align-items: center; gap: 15px; color: white; text-decoration: none;">
+                <i class="fas fa-balance-scale" style="color: var(--accent-pink);"></i>
+                <span style="font-size: 11px; font-weight: 700;">SOL - Litigii Online</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

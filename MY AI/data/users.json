@@ -1,0 +1,16 @@
+[
+  {
+    "username": "azvanR",
+    "password": "$2b$12$xmRMwOxYfpYmlDN5T8XvTOg1AvjFKZQStq5W8geGzXrlNLibJZCVO",
+    "role": "admin",
+    "grade": 3,
+    "email": "balaemi25@gmail.com"
+  },
+  {
+    "username": "vq",
+    "password": "$2b$12$Wgk3C2C77troXPxIjctMWuowltbXDU5jDzBzfEfxNGKi5sL51Zjia",
+    "role": "client",
+    "grade": 0,
+    "email": "user@gmail.com"
+  }
+]

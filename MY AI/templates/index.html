@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ content.hero_title }} | Titan Shop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=AW4H3MS1HApBEVLXiSSuxnDgVzB-1GkBCWRhrOjmOoiMn4IJC01jiNQBoosO9TH_u-IntMuZWxTgXDSN&currency=EUR"></script>
+    <style>
+        /* PRODUCT HOVER TOOLTIP */
+        .product-card { overflow: visible !important; }
+        .product-tooltip {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            width: 280px;
+            background: rgba(5,5,5,0.97);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--accent-pink);
+            border-radius: 14px;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 9000;
+            box-shadow: 0 8px 40px rgba(255,45,149,0.25);
+            text-align: left;
+        }
+        .product-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--accent-pink);
+            border-bottom: none;
+        }
+        .product-card:hover .product-tooltip { opacity: 1; pointer-events: auto; }
+
+        /* Fix glow-text to be subtle - only apply to span children */
+        h1.glow-text { text-shadow: 0 0 40px rgba(255,45,149,0.4); }
+        h1.glow-text span { text-shadow: 0 0 20px var(--accent-pink); }
+    </style>
+</head>
+<body style="background: #050505;">
+    <div id="toast-container" class="toast-container"></div>
+    <nav class="glass fade-in">
+        <a href="/" class="logo">Titan <span>Shop</span></a>
+        <div class="nav-links">
+            <a href="/">Acasă</a>
+            {% if session.get('user') %}
+            <a href="/cart" class="cart-btn">Coș <span id="cart-count">0</span></a>
+            <a href="/orders">Comenzi</a>
+            {% if session.get('role') == 'admin' %}<a href="/admin">Admin Hub</a>{% endif %}
+            <a href="/logout">Logout</a>
+            {% else %}
+            <a href="/login" class="btn-neon" style="padding: 10px 20px; font-size: 11px;">Intră în Cont</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <header class="hero fade-in">
+        <h1 class="glow-text" style="font-size: clamp(3rem, 10vw, 5rem);">{{ content.hero_title }}</h1>
+        <p style="max-width: 800px; margin: 0 auto 40px; color: var(--text-gray);">{{ content.hero_subtitle }}</p>
+        <div class="trust-bar">
+            <div class="trust-item"><i class="fas fa-bolt"></i> Instant Root</div>
+            <div class="trust-item"><i class="fas fa-shield-halved"></i> Cloud Secure</div>
+            <div class="trust-item"><i class="fas fa-headset"></i> 24/7 Intel</div>
+        </div>
+    </header>
+
+    <div class="tabs glass fade-in">
+        <button class="tab active" data-category="all">Categorii Totale</button>
+        <button class="tab" data-category="FiveM">FiveM Systems</button>
+        <button class="tab" data-category="Programe">Software</button>
+        <button class="tab" data-category="Diverse">Diverse</button>
+    </div>
+
+    <div class="products-container fade-in" id="products-grid">
+        {% for p in products %}
+        <div class="glass product-card" data-category="{{ p.category }}" style="position: relative;">
+            <!-- PRODUCT HOVER TOOLTIP -->
+            <div class="product-tooltip">
+                <div style="font-size: 10px; color: var(--accent-pink); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px;">{{ p.category }}</div>
+                <div style="font-weight: 700; color: white; margin-bottom: 8px; font-size: 13px;">{{ p.name }}</div>
+                {% if p.description %}<p style="font-size: 11px; color: #bbb; line-height: 1.5; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">{{ p.description }}</p>{% endif %}
+                <div style="font-size: 10px; color: var(--accent-pink); font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Recenzii</div>
+                {% set rev_found = false %}
+                {% for r in reviews if r.product_id == p.id|string %}
+                {% set rev_found = true %}
+                <div style="margin-bottom: 6px;">
+                    <div style="color: #fbbf24; font-size: 9px;">{% for i in range(r.rating|int) %}<i class="fas fa-star"></i>{% endfor %}</div>
+                    <p style="font-size: 10px; color: #ccc; line-height: 1.3;">&quot;{{ r.comment }}&quot;</p>
+                </div>
+                {% endfor %}
+                {% if not rev_found %}<p style="font-size: 10px; color: #555; font-style: italic;">Nicio recenzie încă.</p>{% endif %}
+            </div>
+
+            <div class="product-image-container">
+                <img src="{{ p.image or 'https://via.placeholder.com/600x400/111/fff?text=No+Img' }}" class="product-image" alt="{{ p.name }}">
+                <div class="product-badge"><i class="fas fa-shield-halved" style="color: #10b981;"></i> Root Verified</div>
+            </div>
+            <div class="product-info">
+                <div class="product-category">{{ p.category }}</div>
+                <h3 class="product-title">{{ p.name }}</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 10px;">
+                    <div class="product-price">{{ p.price }}€</div>
+                    <button class="btn-neon" style="width: auto; padding: 12px 20px; font-size: 10px;" onclick="app.addToCart({id: {{ p.id }}, name: '{{ p.name }}', price: {{ p.price }}, image: '{{ p.image }}', zip: '{{ p.zip }}', description: '{{ p.description }}'})">
+                        <i class="fas fa-cart-plus"></i> CUMPĂRĂ
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <a href="/" class="logo" style="margin-bottom: 25px;">Titan <span>Shop</span></a>
+                <p style="color: var(--text-gray); font-size: 13px; line-height: 1.6;">Soluții digitale de elită pentru dezvoltatori și entuziaști tech.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Legal & GDPR</h4>
+                <ul class="footer-links">
+                    <li><a href="/terms">Termeni & Condiții</a></li>
+                    <li><a href="/privacy">Politica de Confidențialitate</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Suport Root</h4>
+                <ul class="footer-links">
+                    <li><a href="/support">FAQ / FAQ</a></li>
+                    <li><a href="/support">Contact Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-newsletter">
+                <h4>Autorități România</h4>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <a href="https://anpc.ro" target="_blank" class="glass" style="padding: 12px 20px; border-radius: 10px; font-size: 11px; text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-shield-halved" style="color: var(--accent-pink);"></i> ANPC
+                    </a>
+                    <a href="https://ec.europa.eu/consumers/odr" target="_blank" class="glass" style="padding: 12px 20px; border-radius: 10px; font-size: 11px; text-decoration: none; color: white; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-balance-scale" style="color: var(--accent-pink);"></i> SOL
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Titan Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL PLATA -->
+    <div id="payment-modal" class="modal" style="display: none;">
+        <div class="glass modal-content fade-in">
+            <span class="close-btn" onclick="app.closePayment()">&times;</span>
+            <div id="payment-methods-ui">
+                <h2 class="glow-text" style="font-size: 32px; margin-bottom: 20px;">Checkout <span>Titan Root</span></h2>
+                <div class="checkout-trust-row" style="margin-bottom: 30px;">
+                    <div class="trust-mini-card"><i class="fas fa-lock"></i> SSL Encrypted</div>
+                    <div class="trust-mini-card"><i class="fas fa-shield-halved"></i> 3D Root Secure</div>
+                </div>
+                <div style="background: rgba(255, 45, 149, 0.05); padding: 30px; border-radius: 15px; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div id="modal-total" style="font-size: 36px; font-weight: 800; color: white;">0€</div>
+                </div>
+                <div id="payment-methods-ui">
+                    <div id="paypal-button-container" style="min-height: 150px; position: relative; z-index: 100;"></div>
+                </div>
+            </div>
+            <div id="review-request-ui" style="display: none;">
+                <h3 style="color: var(--accent-pink); margin-bottom: 15px;">Root Access Granted!</h3>
+                <p style="margin-bottom: 30px; font-size: 14px;">Lasă un review opțional:</p>
+                <div id="review-items-container"></div>
+                <button onclick="location.href='/orders'" class="btn-neon" style="width: 100%; margin-top: 30px;">CONTINUĂ LA COMENZI</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% if not session.get('user') %}
+    <script>
+        app.addToCart = (prod) => {
+            showToast("Te rugăm să te loghezi pentru a comanda!", "info");
+            setTimeout(() => window.location.href = "/login", 1200);
+        };
+    </script>
+    {% endif %}
+</body>
+</html>
